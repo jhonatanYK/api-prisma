@@ -1,8 +1,5 @@
 import { defineConfig } from "prisma/config";
-import dotenv from "dotenv";
 
-// Carrega o arquivo .env
-dotenv.config();
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -11,6 +8,7 @@ export default defineConfig({
   },
   engine: "classic",
   datasource: {
-    url: process.env.DATABASE_URL ?? "file:./dev.db", // Garante um fallback
+    url: process.env.DATABASE_URL ?? "file:./dev.db",
   },
 });
+//"prisma": "DATABASE_URL=\"file:./dev.db\" npx prisma",

@@ -3,7 +3,7 @@ import { AuthorsService } from './authors.service';
 import { AuthorsController } from './authors.controller';
 
 @Module({
-  controllers: [AuthorsController],
   providers: [AuthorsService],
+  controllers: [AuthorsController]
 })
 export class AuthorsModule {}

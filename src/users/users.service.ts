@@ -1,26 +1,51 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(private prisma: PrismaService) {}
+
+  async create(data: CreateUserDto) {
+    return this.prisma.user.create({ data });
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return this.prisma.user.findMany({
+      include: { author: true, favorites: { include: { post: true } } },
+      orderBy: { id: 'asc' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async update(id: number, data: UpdateUserDto) {
+    return this.prisma.user.update({
+      where: { id },
+      data,
+    });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async addFavorite(userId: number, postId: number) {
+    return this.prisma.favorite.create({
+      data: {
+        userId,
+        postId,
+      },
+      include: { post: true, user: true },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async getFavorites(userId: number) {
+    return this.prisma.favorite.findMany({
+      where: { userId },
+      include: {
+        post: {
+          include: {
+            author: { include: { user: true } },
+          },
+        },
+      },
+      orderBy: { id: 'desc' },
+    });
   }
 }
